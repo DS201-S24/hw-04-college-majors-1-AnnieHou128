@@ -1,7 +1,7 @@
 ---
 title: "HW 4 - College Majors"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Annie Hou"
+date: "02/19/2024"
 output: html_document
 ---
 
@@ -17,40 +17,80 @@ library(fivethirtyeight)
 
 ### Exercise 1
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+The top-3 majors that have the highest percentage of women are: Early Childhood Education, Communication Disorders Sciences And Services, and Medical Assisting Services.
+
+```{r ex1}
+college_recent_grads %>%
+  arrange(desc(sharewomen)) %>%
+  select(major, total, sharewomen) %>%
+  top_n(3, sharewomen)
+
+```
 
 ### Exercise 2
 
-Remove this text, and add your answer for Exercise 2 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+We choose the median because it is less likely to be affected by outliers. For example, a few people may have extremely high incomes, which would increase the mean a lot; or a few people may also have extremely low incomes, leading to a large decrease in mean. However, the median only cares about the middle value of a series of data, which will not be largely affected by those extremes. Therefore, median could better indicate the typical income for a group.
+
 
 ### Exercise 3
 
-Remove this text, and add your answer for Exercise 3 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+I chose a binwidth of $1000, because it offers a more detailed view of the means. It could show more specific patterns in the data, which could be helpful for more in-depth analysis.
+
+```{r median}
+ggplot(college_recent_grads, aes(x = median)) +
+  geom_histogram(binwidth = 1000)
+```
+
+```{r summary-stats}
+college_recent_grads %>%
+  summarize(min = min(median), max = max(median),
+            mean = mean(median), med = median(median),
+            sd = sd(median), 
+            q1 = quantile(median, probs = 0.25),
+            q3 = quantile(median, probs = 0.75))
+```
 
 ### Exercise 4
 
-...
+The center of the distribution is 36000, which is lower than the mean of 40151, which means the distribution of the incomes are clustered on the left side. It also means that while the majority majors have the median incomes that are clustered on the lower end, there are still some majors with significantly higher median incomes, like the plot shows, and that makes the mean larger than the median.
+
+The spread of the data is 11470, measured by the standard deviation. It means the distribution of median incomes is relatively wide, which we can also oberserve from the graph. The interquartile range is from the first quartile at 33000 to the third quartile at 45000, which includes the middle 50% of the data, so half of the majors have median incomes within this range.
+
+For the unusal observations, we can see from the graph that there are majors that have very high median incomes far on the right side. By the max value in the table, we know that it has reached 110000, which is far more than the median and mean. Such outlier could affect the mean and spread of the distribution.
 
 ### Exercise 5
 
-...
+```{r facet-major}
+ggplot(college_recent_grads, aes(x = median)) +
+  geom_histogram(binwidth = 1000) +
+  facet_wrap(~major_category) + 
+  theme_minimal() +
+  labs(title = "Distribution of Median Income by Major Category",
+       x = "Median Income",
+       y = "Count")
+```
+
 
 ### Exercise 6
 
-...
+```{r highest}
+college_recent_grads %>%
+  group_by(major_category) %>%
+  summarize(median_income = median(median)) %>%
+  arrange(desc(median_income))
+```
+
+From the table, we can see that the top 3 majors with the highest typical median income are: engineering, computers & mathematics, and business.
 
 ### Exercise 7
 
-...
+```{r least}
+college_recent_grads %>%
+  count(major_category) %>%
+  arrange(n)
+```
+
+From the table, we can see that the least 3 popular majors are: interdisciplinary, communications & journalism, law & public policy.
 
 ### Exercise 8
 
