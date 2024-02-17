@@ -94,12 +94,45 @@ From the table, we can see that the least 3 popular majors are: interdisciplinar
 
 ### Exercise 8
 
-...
+```{r stem}
+stem_categories <- c("Biology & Life Science",
+                     "Computers & Mathematics",
+                     "Engineering",
+                     "Physical Sciences")
+college_recent_grads <- college_recent_grads %>%
+  mutate(major_type = ifelse(major_category %in% stem_categories,
+                             "stem", "not stem"))
+college_recent_grads %>%
+  filter(major_type == "stem", median < 36000)%>%
+  select(major, median, p25th, p75th) %>%
+  arrange(desc(median))
+
+```
+
 
 ### Exercise 9
 
-...
+```{r plot-women}
+ggplot(college_recent_grads, aes(x = sharewomen, y = median, color = major_type)) +
+  geom_point() +
+  labs(x = "Proportion of Women", y = "Median Income", color = "Major Type") +
+  theme_minimal() +
+  ggtitle("Scatterplot of Median Income vs. Proportion of Women, Colored by STEM Field")
+
+```
+
+The scatterplot first shows a negative correlation between the proportion of women and the median income of that major. Because when the proportion of women increases (to the right side of the x-axis), the median income tends to decrease. Also, there are less STEM majors as the proportion of women increases and the median income decreases, because non-STEM majors (red dots) are more clustered at the lower median income range and have a higher proportion of women (right bottom side of the plot). This may indicate that majors with more women may less likely to have high median income or being STEM. 
 
 ### Exercise 10
 
-...
+```{r unemployment}
+ggplot(college_recent_grads, aes(x = sharewomen, y = unemployment_rate)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title = "Scatterplot of Unemployment Rate vs. Proportion of Women in Major",
+       x = "Proportion of Women",
+       y = "Unemployment Rate") +
+  theme_minimal()
+```
+
+I choose to investigate the relationship between the proportion of women in a major and the unemployment rate of that major. The resulting scatterplot shows a non-linear relationship that tends to go up for the first half and go down for the second half. As the proportion of women increases, the unemployment rate initially appears to decrease slightly and then increases after a certain point. It means that the unemployment rate is correlated to the proportion of women, but the direction changes after certain threshold. The shaded area around the line indicates the confidence interval, which widens as the beginning and the ending part of the curve, which implies more variability in the unemployment rate among majors with a very low or high proportion of women. Therefore, the proportion of women is correlated to the unemployment rate.
